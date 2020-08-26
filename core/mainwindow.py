@@ -9,6 +9,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 from PyQt5.uic import loadUi
+from .show_imageDlg import ShowImageDlg
 from time import sleep
 
 import cv2
@@ -42,12 +43,11 @@ class MainWindow(QMainWindow):
                 msg = QMessageBox.warning(self, u"Warning", u"Check for the connector",
                                           buttons=QMessageBox.Ok,
                                           defaultButton=QMessageBox.Ok)
-            # if msg==QtGui.QMessageBox.Cancel:
-            #                     pass
             else:
                 self.timer_camera.start(30)
-
-                # self.button_open_camera.setText(u'Close Camera')
+                # init for the mousePressEvent
+                # Check the camera is opened
+                self.label_show_camera.mousePressEvent = self.getPos
         else:
             self.timer_camera.stop()
             self.cap.release()
@@ -57,17 +57,33 @@ class MainWindow(QMainWindow):
     def show_camera(self):
         flag, self.image = self.cap.read()
 
-        show = cv2.resize(self.image, (640, 480))
-        show = cv2.cvtColor(show, cv2.COLOR_BGR2RGB)
+        # show = cv2.resize(self.image, (640, 480))
+        show = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
         showImage = QImage(show.data, show.shape[1], show.shape[0], QImage.Format_RGB888)
         self.label_show_camera.setPixmap(QPixmap.fromImage(showImage))
+        self.label_show_camera.resize(self.widget.size())
+        self.label_show_camera.setScaledContents(True)
+
+    def getPos(self, event):
+        x = event.pos().x()
+        y = event.pos().y()
+        print(self.image.shape)
+        print(self.widget.size())
+        print(x, y)
+
+    @pyqtSlot()
+    def on_capture_image_clicked(self):
+        catch_image = self.image
+        print(catch_image.shape)
+        imageDlg = ShowImageDlg(catch_image, 1)
+        imageDlg.exec_()
+        select_area = imageDlg.recallposition()
+        print(select_area)
 
     def closeEvent(self, event):
         ok = QPushButton()
         cacel = QPushButton()
-
         msg = QMessageBox(QMessageBox.Warning, u"Close", u"Check for close！")
-
         msg.addButton(ok, QMessageBox.ActionRole)
         msg.addButton(cacel, QMessageBox.RejectRole)
         ok.setText(u'Yes')
