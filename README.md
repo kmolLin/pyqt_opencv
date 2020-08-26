@@ -1,7 +1,5 @@
 # PyQt5 with OpenCv
 
-===
-
 python3 + PyQt5 + OpenCv
 
 Run PyQt5 GUI with opencv and classifier ArUco Mark
