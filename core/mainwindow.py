@@ -34,6 +34,8 @@ class MainWindow(QMainWindow):
         self.count = 0
         self.aruco_flag = False
         self.camera_matrix = None
+        self.combo = {"1080P": (1920, 1080), "4K": (3840, 2160), "720P": (1080, 720)}
+        self.resoultion_combo.setCurrentIndex(0)
 
     def slot_init(self):
         self.button_open_camera.clicked.connect(self.button_open_camera_click)
@@ -44,6 +46,15 @@ class MainWindow(QMainWindow):
         self.CAM_NUM = self.camera_num.value()
         if self.timer_camera.isActive() is False:
             flag = self.cap.open(self.CAM_NUM)
+            width, height = self.combo[self.resoultion_combo.currentText()]
+            self.cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
+            self.cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+            if self.resoultion_combo.currentText() == "4K":
+                fpps = 30
+            else:
+                fpps = 60
+            self.cap.set(cv2.CAP_PROP_FPS, fpps)
+
             if flag is False:
                 msg = QMessageBox.warning(self, u"Warning", u"Check for the connector",
                                           buttons=QMessageBox.Ok,
@@ -83,26 +94,27 @@ class MainWindow(QMainWindow):
                                                          distCoeff=self.camera_distortion)
             if ids is not None:
                 # -- Find the marker's 6-DOF pose
-                rvecs, tvecs, _objPoints = aruco.estimatePoseSingleMarkers(corners, self.marker_size, self.camera_matrix,
+                rvecs, tvecs, _objPoints = aruco.estimatePoseSingleMarkers(corners, 140,
+                                                                           self.camera_matrix,
                                                                            self.camera_distortion)
                 # print(rvecs)
                 for i in range(rvecs.shape[0]):
-                    aruco.drawAxis(self.image, self.camera_matrix, self.camera_distortion, rvecs[i, :, :], tvecs[i, :, :], 50)
+                    aruco.drawAxis(self.image, self.camera_matrix, self.camera_distortion, rvecs[i, :, :], tvecs[i, :, :], 100)
                     aruco.drawDetectedMarkers(self.image, corners)
                 id_str = "id:{}".format(ids[0][0])
-                rvecs_str = "rvecs:{:.2f},{:.2f},{:.2f}".format(rvecs[0][0][0], rvecs[0][0][1], rvecs[0][0][2])
-                tvecs_str = "tvecs:{:.3f},{:.3f},{:.3f}".format(tvecs[0][0][0], tvecs[0][0][1], tvecs[0][0][2])
+                rvecs_str = "rvecs:Rx: {:.2f},Ry: {:.2f},Rz: {:.2f}".format(rvecs[0][0][0], rvecs[0][0][1], rvecs[0][0][2])
+                tvecs_str = "tvecs:Tx: {:.3f},Ty: {:.3f},Tz: {:.3f}".format(tvecs[0][0][0], tvecs[0][0][1], tvecs[0][0][2])
                 center_point_str = f"center point {corners}"
-                cv2.putText(self.image, id_str, (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 5)
-                cv2.putText(self.image, rvecs_str, (0, 130), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 5)
-                cv2.putText(self.image, tvecs_str, (0, 230), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 5)
-                cv2.putText(self.image, center_point_str, (0, 330), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 5)
+                # cv2.putText(self.image, id_str, (0, 30), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 5)
+                # cv2.putText(self.image, rvecs_str, (0, 130), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 5)
+                # cv2.putText(self.image, tvecs_str, (0, 230), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 255, 0), 5)
+                # cv2.putText(self.image, center_point_str, (0, 330), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 5)
                 self.tvec_label.setText(tvecs_str)
                 self.rvec_label.setText(rvecs_str)
         else:
             pass
-        # show = cv2.resize(self.image, (640, 480))
-        show = cv2.cvtColor(self.image, cv2.COLOR_BGR2RGB)
+        show = cv2.resize(self.image, (1920, 1080))
+        show = cv2.cvtColor(show, cv2.COLOR_BGR2RGB)
         showImage = QImage(show.data, show.shape[1], show.shape[0], QImage.Format_RGB888)
         self.label_show_camera.setPixmap(QPixmap.fromImage(showImage))
         self.label_show_camera.resize(self.widget.size())
