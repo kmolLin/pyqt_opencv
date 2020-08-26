@@ -6,7 +6,7 @@ python3 + PyQt5 + OpenCv
 
 Run PyQt5 GUI with opencv and classifier ArUco Mark
 
-![](cover/cover.png?raw=true)
+![](https://github.com/kmolLin/pyqt_opencv/blob/master/cover/cover.jpg?raw=true)
 
 How to use it ?
 ---
