@@ -37,9 +37,9 @@ class MainWindow(QMainWindow):
 
     def button_open_camera_click(self):
         self.CAM_NUM = self.camera_num.value()
-        if self.timer_camera.isActive() == False:
+        if self.timer_camera.isActive() is False:
             flag = self.cap.open(self.CAM_NUM)
-            if flag == False:
+            if flag is False:
                 msg = QMessageBox.warning(self, u"Warning", u"Check for the connector",
                                           buttons=QMessageBox.Ok,
                                           defaultButton=QMessageBox.Ok)
@@ -75,10 +75,13 @@ class MainWindow(QMainWindow):
     def on_capture_image_clicked(self):
         catch_image = self.image
         print(catch_image.shape)
-        imageDlg = ShowImageDlg(catch_image, 1)
-        imageDlg.exec_()
-        select_area = imageDlg.recallposition()
-        print(select_area)
+        filename, _ = QFileDialog.getSaveFileName(self, "Save JPG File", "data.jpg", "JPG files (*.jpg)")
+        if filename:
+            cv2.imwrite(filename, catch_image)
+        # imageDlg = ShowImageDlg(catch_image, self.show_camera_scale.value())
+        # imageDlg.exec_()
+        # select_area = imageDlg.recallposition()
+        # print(select_area)
 
     def closeEvent(self, event):
         ok = QPushButton()

@@ -1,4 +1,10 @@
-# -*- coding: utf-8 -*-
+#!/usr/bin/python
+# -*- coding: UTF-8 -*-
+
+__author__ = "Yu-Sheng Lin"
+__copyright__ = "Copyright (C) 2016-2020"
+__license__ = "AGPL"
+__email__ = "pyquino@gmail.com"
 
 import sys
 from PyQt5.QtWidgets import *
