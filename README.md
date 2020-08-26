@@ -6,6 +6,8 @@ Run PyQt5 GUI with opencv and classifier ArUco Mark
 
 ![](https://github.com/kmolLin/pyqt_opencv/blob/master/cover/cover.jpg?raw=true)
 
+![](https://github.com/kmolLin/pyqt_opencv/blob/master/cover/motion.gif?raw=true)
+
 How to use it ?
 ---
 
