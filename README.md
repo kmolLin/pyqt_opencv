@@ -6,9 +6,7 @@ python3 + PyQt5 + OpenCv
 
 Run PyQt5 GUI with opencv and classifier ArUco Mark
 
-![](cover/cover.png)
-
-![](cover/motion.mp4)
+![](cover/cover.png?raw=true)
 
 How to use it ?
 ---
